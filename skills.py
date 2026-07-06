@@ -58,15 +58,20 @@ ROLE_SKILLS = {
 # =========================
 
 skills_list = [
+
     "python",
     "java",
     "c",
     "c++",
+
     "sql",
+    "mysql",
+
     "html",
     "css",
     "javascript",
     "react",
+
     "machine learning",
     "deep learning",
     "data analysis",
@@ -85,13 +90,7 @@ skills_list = [
 
     "git",
     "github",
+
     "docker",
     "mlops"
-    "sql",
-    "mysql",
-    "machine learning",
-    "deep learning",
-    "nlp",
-    "git",
-    "github"
 ]

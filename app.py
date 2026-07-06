@@ -1,230 +1,244 @@
 import streamlit as st
-import pandas as pd
-from pypdf import PdfReader
-from ats import extract_skills, calculate_ats
-from skills import ROLE_SKILLS
-
-# =========================
-# PAGE CONFIG
-# =========================
-
 st.set_page_config(
     page_title="AI Career Copilot",
     page_icon="🤖",
     layout="wide"
 )
+from pypdf import PdfReader
+import pandas as pd
+from ats import extract_skills, calculate_ats
+from skills import ROLE_SKILLS
 
-# =========================
-# CREATE HISTORY FILE
-# =========================
+from career import (
+    generate_resume_feedback,
+    skill_gap_analysis,
+    learning_roadmap,
+    get_interview_questions,
+    recommended_projects
+)
+
+from report import generate_report
+from charts import show_skill_chart
+
+# ==========================
+# CUSTOM CSS
+# ==========================
+
+st.markdown("""
+<style>
+
+.main {
+    background-color:#f6f8fc;
+}
+
+.block-container{
+    padding-top:2rem;
+    padding-bottom:2rem;
+}
+
+div[data-testid="stMetric"] {
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 15px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+div[data-testid="stMetric"] label {
+    color: #222222 !important;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #111111 !important;
+    font-weight: bold !important;
+}
+
+div[data-testid="stMetricDelta"] {
+    color: #16a34a !important;
+}
+
+.stButton>button{
+    width:100%;
+    border-radius:12px;
+    height:50px;
+    font-weight:bold;
+    font-size:17px;
+}
+
+.skill{
+    background:#E8F0FE;
+    padding:8px;
+    border-radius:8px;
+    margin:5px;
+    display:inline-block;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================
+# HISTORY FILE
+# ==========================
 
 try:
-    open("history.txt", "a").close()
+    open("history.txt","a").close()
 except:
     pass
 
-# =========================
+# ==========================
 # SIDEBAR
-# =========================
+# ==========================
 
-st.sidebar.title("AI Career Copilot")
-
-from pypdf import PdfReader
-
-from ats import extract_skills
-from ats import calculate_ats
-
-# -----------------------------
-# Sidebar Navigation
-# -----------------------------
-st.sidebar.title("🤖 AI Resume Analyzer")
-
+st.sidebar.title("🤖 AI Career Copilot")
 
 menu = st.sidebar.radio(
     "Navigation",
     [
-        "📄 Upload Resume",
+        "📄 Resume Analyzer",
         "📜 Recent Analyses",
         "📊 ATS Statistics",
-        "ℹ️ About Project"
+        "ℹ️ About"
     ]
 )
 
+# ===================================================
+# RESUME ANALYZER
+# ===================================================
 
-# =========================
-# UPLOAD RESUME PAGE
-# =========================
+if menu=="📄 Resume Analyzer":
 
-if menu == "📄 Upload Resume":
+    st.markdown("# 🤖 AI Career Copilot")
 
-    st.title("🤖 AI Resume Analyzer")
-    st.subheader("Smart ATS Score Predictor & Career Assistant")
+    st.markdown(
+        "### AI Powered Resume Analysis & Career Guidance"
+    )
 
     st.info(
-        "Upload your resume and compare it with a job description to calculate ATS score and identify missing skills."
+        "Upload your resume and compare it with a Job Description."
     )
 
-    stat1, stat2, stat3 = st.columns(3)
+    c1,c2,c3=st.columns(3)
 
-    stat1.metric("📄 Resumes Analyzed", "100+")
-    stat2.metric("🛠 Skills Supported", "50+")
-    stat3.metric("🎯 Accuracy", "95%")
-
-    st.markdown("---")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        uploaded_file = st.file_uploader(
-            "📄 Upload Resume PDF",
-            type=["pdf"]
+    with c1:
+        st.metric(
+            "📄 Resume Database",
+            "100+",
+            "Growing"
         )
 
-    with col2:
-     job_description = st.text_area(
-        "💼 Paste Job Description Here",
-        height=250
-    )
+    with c2:
+        st.metric(
+            "🛠 Supported Skills",
+            "100+",
+            "Updated"
+        )
 
-    job_role = st.selectbox(
-        "🎯 Select Target Job Role",
-        [
-            "Data Analyst",
-            "Data Scientist",
-            "Machine Learning Engineer",
-            "AI Engineer",
-            "Software Engineer"
-        ]
-    )
+    with c3:
+        st.metric(
+            "🎯 ATS Accuracy",
+            "95%",
+            "Excellent"
+        )
 
-    if uploaded_file is not None:
+    st.divider()
 
-# -----------------------------
-# Upload Resume Page
-# -----------------------------
-if menu == "📄 Upload Resume":
-
-    st.markdown("""
-    # 🤖 AI Resume Analyzer
-
-    ### Smart ATS Score Predictor & Career Assistant
-    """)
-
-    uploaded_file = st.file_uploader(
+    uploaded_file=st.file_uploader(
         "Upload Resume PDF",
-        type="pdf"
+        type=["pdf"]
     )
 
-    job_description = st.text_area(
-        "Paste Job Description Here"
+    job_description=st.text_area(
+        "Paste Job Description",
+        height=220
+    )
+
+    job_role=st.selectbox(
+        "Target Role",
+        list(ROLE_SKILLS.keys())
     )
 
     if uploaded_file:
 
+        pdf=PdfReader(uploaded_file)
 
-        pdf = PdfReader(uploaded_file)
-
-        resume_text = ""
+        resume_text=""
 
         for page in pdf.pages:
-            text = page.extract_text()
 
-            if text:
-                resume_text += text
+            txt=page.extract_text()
 
-        resume_skills = extract_skills(resume_text)
+            if txt:
 
+                resume_text+=txt
 
-        st.markdown("---")
-        st.subheader("🛠 Skills Detected")
+        resume_skills=extract_skills(resume_text)
 
-        if resume_skills:
+        st.success("Resume uploaded successfully!")
 
-            skill_cols = st.columns(3)
+        st.markdown("## 🛠 Skills Detected")
 
-            for i, skill in enumerate(resume_skills):
-                skill_cols[i % 3].success(skill)
+        cols=st.columns(3)
 
+        for i,skill in enumerate(resume_skills):
 
-        st.subheader("✅ Skills Found")
+            cols[i%3].success(skill)
+                    # ==========================================
+        # ATS ANALYSIS
+        # ==========================================
 
-        if resume_skills:
-            for skill in resume_skills:
-                st.success(skill)
-
-        else:
-            st.warning("No skills detected.")
-
-        if job_description:
+        if job_description.strip():
 
             job_skills = extract_skills(job_description)
 
-            ats_score = calculate_ats(
-                resume_skills,
-                job_skills
+            ats_score = round(
+                calculate_ats(
+                    resume_skills,
+                    job_skills
+                ),
+                2
             )
-
-
-            # Save ATS score history
-            with open("history.txt", "a") as file:
-                file.write(f"{ats_score}\n")
-
-            st.subheader("📊 ATS Score")
-
-            st.metric(
-                label="ATS Score",
-                value=f"{ats_score}%"
-            )
-
-            st.progress(int(ats_score))
-
 
             missing_skills = list(
                 set(job_skills) -
                 set(resume_skills)
             )
 
+            st.divider()
 
-            st.markdown("---")
-            st.subheader("📊 ATS Dashboard")
+            st.markdown("## 📊 ATS Dashboard")
 
-            d1, d2 = st.columns(2)
+            m1, m2, m3 = st.columns(3)
 
-            with d1:
+            if ats_score >= 80:
+                score_status = "🟢 Excellent"
+            elif ats_score >= 60:
+                score_status = "🟡 Good"
+            else:
+                score_status = "🔴 Needs Improvement"
+
+            with m1:
                 st.metric(
                     "ATS Score",
-                    f"{ats_score}%"
+                    f"{ats_score}%",
+                    score_status
+                )
+                st.progress(ats_score / 100)
+
+            with m2:
+                st.metric(
+                    "Skills Found",
+                    len(resume_skills)
                 )
 
-                st.progress(
-                    int(ats_score)
+            with m3:
+                st.metric(
+                    "Missing Skills",
+                    len(missing_skills)
                 )
 
-            with d2:
-                st.info(
-                    f"""
-📋 Resume Summary
+            st.divider()
 
-Skills Found: {len(resume_skills)}
-
-Required Skills: {len(job_skills)}
-
-Missing Skills: {len(missing_skills)}
-
-ATS Score: {ats_score}%
-"""
-                )
-
-            if ats_score >= 90:
-                st.success("🏆 Excellent Resume Match")
-            elif ats_score >= 70:
-                st.info("👍 Good Resume Match")
-            elif ats_score >= 50:
-                st.warning("⚠️ Average Resume Match")
-            else:
-                st.error("❌ Needs Improvement")
-
-            st.subheader("❌ Missing Skills")
+            st.markdown("## ❌ Missing Skills")
 
             if missing_skills:
 
@@ -235,251 +249,165 @@ ATS Score: {ats_score}%
 
             else:
                 st.success(
-                    "🎉 No Missing Skills Found"
+                    "🎉 No missing skills detected!"
                 )
 
-            # Chart
-            matched_count = max(
-                len(job_skills) - len(missing_skills),
-                0
+            # Skill Chart
+            show_skill_chart(
+                resume_skills,
+                missing_skills
             )
 
-            chart_data = pd.DataFrame(
-                {
-                    "Category": [
-                        "Matched Skills",
-                        "Missing Skills"
-                    ],
-                    "Count": [
-                        matched_count,
-                        len(missing_skills)
-                    ]
-                }
+            # ==========================================
+            # AI RESUME FEEDBACK
+            # ==========================================
+
+            st.divider()
+
+            st.markdown("## 🤖 AI Resume Feedback")
+
+            feedback = generate_resume_feedback(
+                ats_score,
+                missing_skills
             )
 
-            st.subheader("📈 Skill Match Analysis")
-            st.bar_chart(
-                chart_data.set_index("Category")
+            for tip in feedback:
+                st.info(tip)
+
+            # ==========================================
+            # SKILL GAP ANALYSIS
+            # ==========================================
+
+            st.divider()
+
+            st.markdown("## 🚀 Skill Gap Analysis")
+
+            gaps = skill_gap_analysis(
+                job_role,
+                resume_skills
             )
 
-            st.markdown("---")
-            st.subheader("🚀 Career Copilot Skill Gap Analysis")
+            if gaps:
 
-            required_skills = ROLE_SKILLS[job_role]
+                cols = st.columns(3)
 
-            career_gaps = []
-
-            for skill in required_skills:
-                if skill.lower() not in resume_text.lower():
-                    career_gaps.append(skill)
-
-            if career_gaps:
-
-                st.warning(
-                    f"Skills needed for becoming a {job_role}"
-                )
-
-                for skill in career_gaps:
-                    st.write("❌", skill)
+                for i, gap in enumerate(gaps):
+                    cols[i % 3].error(gap)
 
             else:
+
                 st.success(
-                    f"Your resume already covers most skills required for {job_role}"
+                    "✅ You already match this role very well!"
                 )
 
-            st.markdown("---")
-            st.subheader("🎤 AI Interview Question Generator")
+            # ==========================================
+            # LEARNING ROADMAP
+            # ==========================================
 
-            interview_questions = {
+            st.divider()
 
-                "Data Analyst": [
-                    "Explain the difference between INNER JOIN and LEFT JOIN.",
-                    "What is the purpose of Pandas in Python?",
-                    "How would you handle missing data?"
-                ],
+            st.markdown("## 📚 Learning Roadmap")
 
-                "Data Scientist": [
-                    "What is overfitting?",
-                    "Explain bias vs variance.",
-                    "What is cross-validation?"
-                ],
+            roadmap = learning_roadmap(gaps)
 
-                "Machine Learning Engineer": [
-                    "What is feature engineering?",
-                    "Explain Random Forest.",
-                    "What is model deployment?"
-                ],
+            if roadmap:
 
-                "AI Engineer": [
-                    "What is NLP?",
-                    "Explain transformers and LLMs.",
-                    "What is prompt engineering?"
-                ],
-
-                "Software Engineer": [
-                    "Explain OOP concepts.",
-                    "What is time complexity?",
-                    "Difference between list and tuple?"
-                ]
-            }
-
-            for q in interview_questions[job_role]:
-                st.info(q)
-
-            st.markdown("---")
-            st.subheader("📚 Personalized Learning Roadmap")
-
-            if career_gaps:
-
-                st.info(
-                    f"Roadmap to become a {job_role}"
-                )
-
-                for i, skill in enumerate(career_gaps[:5], start=1):
-                    st.write(
-                        f"Week {i}: Learn {skill}"
-                    )
+                for step in roadmap:
+                    st.write("✅", step)
 
             else:
+
                 st.success(
-                    "You already have most of the required skills for this role."
+                    "No learning roadmap required."
                 )
+                            # ==========================================
+            # INTERVIEW QUESTIONS
+            # ==========================================
 
-            st.markdown("---")
-            st.subheader("🎯 Recommended Projects")
+            st.divider()
 
-            project_recommendations = {
+            st.markdown("## 🎤 Interview Questions")
 
-                "Data Analyst": [
-                    "Sales Dashboard using Power BI",
-                    "Customer Churn Analysis",
-                    "HR Analytics Dashboard"
-                ],
+            questions = get_interview_questions(job_role)
 
-                "Data Scientist": [
-                    "Customer Churn Prediction",
-                    "House Price Prediction",
-                    "Movie Recommendation System"
-                ],
+            if questions:
 
-                "Machine Learning Engineer": [
-                    "MLOps Pipeline Project",
-                    "Fraud Detection System",
-                    "Predictive Maintenance System"
-                ],
+                for i, question in enumerate(questions, start=1):
 
-                "AI Engineer": [
-                    "AI Resume Analyzer",
-                    "Voice-to-SQL Query Generator",
-                    "Document Q&A Chatbot"
-                ],
+                    with st.expander(f"Question {i}"):
 
-                "Software Engineer": [
-                    "Expense Tracker",
-                    "E-Commerce Website",
-                    "Task Management System"
-                ]
-            }
-
-            for project in project_recommendations[job_role]:
-                st.success(f"⭐ {project}")
-
-         # AI Suggestions
-            st.subheader("🤖 AI Suggestions")
-
-            if missing_skills:
-                st.info(
-                    "Learn these skills next: "
-                    + ", ".join(missing_skills[:5])
-                )
-            else:
-                st.success(
-                    "Your resume matches the job description very well."
-                )
-
-            # Recommended Roles
-            st.subheader("🎯 Recommended Roles")
-
-            recommended_roles = []
-
-            if "python" in resume_skills:
-                recommended_roles.append(
-                    "Python Developer"
-                )
-
-            if "machine learning" in resume_skills:
-                recommended_roles.append(
-                    "ML Engineer"
-                )
-
-            if "data analysis" in resume_skills:
-                recommended_roles.append(
-                    "Data Analyst"
-                )
-
-            if "react" in resume_skills:
-                recommended_roles.append(
-                    "Frontend Developer"
-                )
-
-            if recommended_roles:
-
-                for role in recommended_roles:
-                    st.success(role)
+                        st.write(question)
 
             else:
-                st.info(
-                    "Add more technical skills for role recommendations."
+
+                st.info("No interview questions available.")
+
+            # ==========================================
+            # PROJECT RECOMMENDATIONS
+            # ==========================================
+
+            st.divider()
+
+            st.markdown("## 💼 Recommended Projects")
+
+            projects = recommended_projects(job_role)
+
+            cols = st.columns(2)
+
+            for i, project in enumerate(projects):
+
+                cols[i % 2].success(project)
+
+            # ==========================================
+            # DOWNLOAD REPORT
+            # ==========================================
+
+            st.divider()
+
+            st.markdown("## 📄 Career Report")
+
+            report = generate_report(
+
+                ats_score,
+
+                resume_skills,
+
+                missing_skills,
+
+                job_role,
+
+                gaps,
+
+                roadmap,
+
+                projects,
+
+                questions
+
+            )
+
+            with open("history.txt", "a") as file:
+
+                file.write(
+                    f"ATS: {ats_score}% | Role: {job_role}\n"
                 )
 
-            # Download Report
-            report = f"""
-AI Career Copilot Report
-
-ATS Score: {ats_score}%
-
-Skills Found:
-{', '.join(resume_skills)}
-
-Missing Skills:
-{', '.join(missing_skills)}
-
-Target Role:
-{job_role}
-
-Skill Gaps:
-{', '.join(career_gaps)}
-"""
             st.download_button(
-                label="📄 Download ATS Report",
-                data=report,
-                file_name="ATS_Report.txt",
+
+                "📥 Download Career Report",
+
+                report,
+
+                file_name="AI_Career_Report.txt",
+
                 mime="text/plain"
+
             )
 
-    st.markdown("---")
-    st.caption(
-        "Built with Python, NLP and Streamlit | Created by Shruti Singh"
-    ) 
-
-# =========================
+# ===================================================
 # RECENT ANALYSES
-# =========================
+# ===================================================
 
-=======
-            st.subheader("❌ Missing Skills")
-
-            if missing_skills:
-                for skill in missing_skills:
-                    st.warning(skill)
-            else:
-                st.success(
-                    "Excellent! No missing skills found."
-                )
-
-# -----------------------------
-# Recent Analyses Page
-# -----------------------------
 elif menu == "📜 Recent Analyses":
 
     st.title("📜 Recent Analyses")
@@ -487,161 +415,122 @@ elif menu == "📜 Recent Analyses":
     try:
 
         with open("history.txt", "r") as file:
-            scores = file.readlines()
 
-        if scores:
+            history = file.readlines()
 
-            for i, score in enumerate(
-                reversed(scores[-10:])
-            ):
+        if history:
 
-                st.success(
-                    f"Analysis {len(scores)-i}: ATS Score = {score.strip()}%"
-                )
+            st.success(f"Total Analyses: {len(history)}")
+
+            for item in reversed(history):
+
+                st.write("•", item.strip())
 
         else:
-            st.info("No analyses yet.")
 
-    except:
-        st.info("No history available.")
+            st.info("No previous analyses found.")
 
-# =========================
+    except FileNotFoundError:
+
+        st.info("History file not found.")
+
+# ===================================================
 # ATS STATISTICS
-# =========================
+# ===================================================
 
-=======
-    st.info(
-        "This feature will store previous resume analyses."
-    )
-
-    st.write("""
-    Future Features:
-    - View previous ATS scores
-    - Compare resumes
-    - Track improvements
-    """)
-
-# -----------------------------
-# ATS Statistics Page
-# -----------------------------
 elif menu == "📊 ATS Statistics":
 
     st.title("📊 ATS Statistics")
 
-    try:
+    total_roles = len(ROLE_SKILLS)
+    total_skills = sum(len(v) for v in ROLE_SKILLS.values())
 
-        with open("history.txt", "r") as file:
+    col1, col2 = st.columns(2)
 
-            scores = [
-                float(x.strip())
-                for x in file.readlines()
-            ]
+    with col1:
+        st.metric("Supported Roles", total_roles)
 
-        if scores:
+    with col2:
+        st.metric("Total Skills", total_skills)
 
-            c1, c2, c3 = st.columns(3)
+    st.divider()
 
-            c1.metric(
-                "Total Analyses",
-                len(scores)
-            )
+    st.subheader("🎯 Supported Career Paths")
 
-            c2.metric(
-                "Average ATS",
-                round(
-                    sum(scores) / len(scores),
-                    2
-                )
-            )
+    for role in ROLE_SKILLS.keys():
+        st.write(f"✅ {role}")
 
-            c3.metric(
-                "Highest ATS",
-                max(scores)
-            )
+    st.divider()
 
-            chart_df = pd.DataFrame(
-                {"ATS Score": scores}
-            )
+    st.subheader("📈 AI Career Copilot Summary")
 
-            st.line_chart(chart_df)
+    st.success(f"""
+✅ Supported Roles: {total_roles}
 
-        else:
-            st.info("No statistics available.")
+✅ Total Skills in Database: {total_skills}
 
-    except:
-        st.info("No statistics available.")
-
-# =========================
-# ABOUT PAGE
-# =========================
-
-=======
-    st.info(
-        "Analytics dashboard coming soon."
-    )
-
-    st.write("""
-    Planned Features:
-    - Average ATS Score
-    - Skill Match Percentage
-    - Resume Performance Trends
-    """)
-
-# -----------------------------
-# About Project Page
-# -----------------------------
-elif menu == "ℹ️ About Project":
-
-st.title("ℹ️ About Project")
-
-st.write("""
-AI Resume Analyzer is an NLP-powered application that compares resumes against job descriptions.
-
-### Features
 ✅ Resume PDF Parsing
-
-✅ Skill Extraction
 
 ✅ ATS Score Calculation
 
-✅ Missing Skill Detection
+✅ Skill Extraction
 
-✅ AI Suggestions
+✅ Skill Gap Analysis
 
-✅ Recommended Roles
+✅ Career Guidance
 
-✅ Downloadable Report
+✅ Interview Questions
 
-### Tech Stack
-• Python
+✅ Learning Roadmap
+""")
+    
+# ===================================================
+# ABOUT
+# ===================================================
 
-• Streamlit
+elif menu == "ℹ️ About":
 
-• NLP
+    st.title("🤖 AI Career Copilot")
 
-• Pandas
+    st.markdown("""
+### 🚀 Features
 
-• PyPDF2
+- Resume PDF Parsing
+- ATS Score
+- Skill Extraction
+- Missing Skill Detection
+- AI Resume Feedback
+- Skill Gap Analysis
+- Learning Roadmap
+- Interview Questions
+- Project Recommendations
+- Career Report Download
+
+---
+
+### 🛠 Built With
+
+- Python
+- Streamlit
+- Pandas
+- PyPDF
+- NLP
+
+---
+
+### 👩‍💻 Developer
+
+**Shruti Singh**
+
+AI • Machine Learning • Data Science
 """)
 
-st.success(
-        "AI / ML / NLP Portfolio Project"
-    AI Resume Analyzer is an NLP-based project that helps job seekers improve their resumes.
+# ===================================================
+# FOOTER
+# ===================================================
 
-    Features:
-    ✅ Resume PDF Parsing
-    ✅ Skill Extraction
-    ✅ ATS Score Calculation
-    ✅ Missing Skill Detection
-    ✅ Job Description Matching
+st.divider()
 
-    Technologies Used:
-    - Python
-    - Streamlit
-    - NLP
-    - PyPDF2
-    """)
-
-    st.success(
-        "Created as an AI/ML/NLP project."
-        )
+st.caption(
+    "🚀 AI Career Copilot • Developed by Shruti Singh"
+)
