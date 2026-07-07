@@ -86,15 +86,38 @@ streamlit run app.py
 ## Screenshots
 
 ### Home Page
-![Home Page]<img width="959" height="485" alt="home page" src="https://github.com/user-attachments/assets/4dedc62b-97f7-433e-91d2-5aae8de7aeea" />
+<img width="959" height="481" alt="Screenshot 2026-07-07 235344" src="https://github.com/user-attachments/assets/ea65f1b6-6bc8-406a-aaa4-68e8f6baf85f" />
+<img width="959" height="436" alt="Screenshot 2026-07-07 235426" src="https://github.com/user-attachments/assets/d94cfafc-82fd-4e41-8520-7924d288e243" />
 
 
-### Resume Analysis
-![Analysis]<img width="959" height="483" alt="Resume analysis" src="https://github.com/user-attachments/assets/a07c93e4-30c3-4bb2-a27f-111f88c5bee5" />
+Capture:
+
+AI Career Copilot title
+Upload Resume section
+Job Description box
+Target Role dropdown
 
 
-### Skills Extraction
-![Skills]<img width="959" height="484" alt="Skills extracted , recommendations" src="https://github.com/user-attachments/assets/830e0c05-c328-4e24-81db-09ee3c996116" />
+## ATS Dashboard
+<img width="958" height="481" alt="Screenshot 2026-07-07 235631" src="https://github.com/user-attachments/assets/f7bb1c88-ff3b-4b2e-a848-04eebbea0f7c" />
+
+After uploading a resume and job description, capture:
+
+ATS Score
+Skills Found
+Missing Skills
+
+## Skill Gap Analysis
+<img width="958" height="476" alt="Screenshot 2026-07-07 235743" src="https://github.com/user-attachments/assets/27886f1f-8c35-4a01-81cd-c4724b2f44b9" />
+
+## Learning Roadmap
+<img width="731" height="146" alt="Screenshot 2026-07-07 235855" src="https://github.com/user-attachments/assets/fa2ac766-0ae2-44a9-8f16-1e26e6a49ce6" />
+
+## Interview Questions
+<img width="959" height="479" alt="Screenshot 2026-07-08 000556" src="https://github.com/user-attachments/assets/45f85c33-4f6f-4a32-b498-0af302cc0694" />
+
+## Recommended Projects
+<img width="958" height="475" alt="Screenshot 2026-07-08 000501" src="https://github.com/user-attachments/assets/aaf7bd18-2709-48e9-aceb-283049a587e7" />
 
 
 ## 👩‍💻 Author
@@ -102,6 +125,7 @@ streamlit run app.py
 **Shruti Singh**
 
 AI • Machine Learning • Data Science
+
 
 ## ⭐ If you like this project
 
