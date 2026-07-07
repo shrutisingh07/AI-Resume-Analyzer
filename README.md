@@ -1,5 +1,11 @@
 # 🤖 AI Career Copilot
 
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-red?logo=streamlit)
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-blue?logo=pandas)
+![GitHub](https://img.shields.io/badge/GitHub-Portfolio-black?logo=github)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 An AI-powered Resume Analyzer that helps job seekers improve their resumes by calculating ATS scores, identifying missing skills, providing personalized career guidance, and generating interview preparation resources.
 
 
