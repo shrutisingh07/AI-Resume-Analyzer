@@ -1,42 +1,80 @@
-# AI Career Copilot 
+# 🤖 AI Career Copilot
 
-An AI-powered Career Copilot that analyzes resumes, predicts ATS scores, identifies skill gaps, generates interview questions, and creates personalized learning roadmaps.
+An AI-powered Resume Analyzer that helps job seekers improve their resumes by calculating ATS scores, identifying missing skills, providing personalized career guidance, and generating interview preparation resources.
 
 
 ## Live Demo
-
+https://ai-career-copilot-9joddhs3nduu86n3zc7h2f.streamlit.app/
 https://airesumeanalyzer-urawcyzcnwczpa8ftrte7h.streamlit.app/
 
-## Features
 
-* Resume PDF Parsing
-* ATS Score Prediction
-* Skill Extraction using NLP
-* Missing Skill Detection
-* Skill Match Visualization
-* Career Skill Gap Analysis
-* AI Interview Question Generator
-* Personalized Learning Roadmap
-* Role Recommendations
-* Download ATS Report
+## 📌 Features
 
-## Tech Stack
+- 📄 Resume PDF Parsing
+- 🎯 ATS Score Calculation
+- 🛠 Skill Extraction
+- ❌ Missing Skill Detection
+- 🤖 AI Resume Feedback
+- 📈 Skill Gap Analysis
+- 📚 Personalized Learning Roadmap
+- 🎤 Interview Questions
+- 💼 Project Recommendations
+- 📥 Download Career Report
+- 📜 Recent Analysis History
+- 📊 ATS Statistics Dashboard
+
+## 🛠 Tech Stack
 
 - Python
 - Streamlit
-- NLP
 - Pandas
 - PyPDF
-- Git
-- GitHub
+- NLP (Keyword-based Skill Extraction)
+- Git & GitHub
 
+  ## 📂 Project Structure
 
-## How It Works
+```text
+AI_Career_Copilot/
+│
+├── app.py
+├── ats.py
+├── career.py
+├── charts.py
+├── report.py
+├── skills.py
+├── history.txt
+├── requirements.txt
+├── README.md
+└── screenshots/
+```
 
-1. Upload a resume in PDF format.
-2. The application extracts and analyzes the content.
-3. Skills and relevant information are identified.
-4. Insights and recommendations are displayed to the user.
+## ⚙️ Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/AI_Career_Copilot.git
+```
+
+Go to the project folder
+
+```bash
+cd AI_Career_Copilot
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the application
+
+```bash
+streamlit run app.py
+```
+
 
 ## Screenshots
 
@@ -52,6 +90,12 @@ https://airesumeanalyzer-urawcyzcnwczpa8ftrte7h.streamlit.app/
 ![Skills]<img width="959" height="484" alt="Skills extracted , recommendations" src="https://github.com/user-attachments/assets/830e0c05-c328-4e24-81db-09ee3c996116" />
 
 
-## Author
+## 👩‍💻 Author
 
-Shruti Singh
+**Shruti Singh**
+
+AI • Machine Learning • Data Science
+
+## ⭐ If you like this project
+
+consider giving it a ⭐ on GitHub!
