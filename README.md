@@ -5,6 +5,7 @@ An AI-powered Resume Analyzer that helps job seekers improve their resumes by ca
 
 ## Live Demo
 https://ai-career-copilot-9joddhs3nduu86n3zc7h2f.streamlit.app/
+
 https://airesumeanalyzer-urawcyzcnwczpa8ftrte7h.streamlit.app/
 
 
